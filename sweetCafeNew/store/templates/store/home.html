@@ -1,0 +1,134 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<style>
+  h2 { font-family: 'Merienda', cursive; font-size: 2rem; margin-bottom: 20px; color: var(--primary); text-align: center; }
+  
+  /* Categories */
+  .categories {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .cat-btn {
+    background: var(--card-bg);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: 'Atma', cursive;
+    transition: all 0.3s;
+  }
+  .cat-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px var(--shadow);
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .card:hover { transform: scale(1.03); }
+  .card img { width: 100%; height: 220px; object-fit: cover; }
+  .card-body { padding: 20px; }
+  .card-body h3 { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; }
+  .card-body p { font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5; opacity: 0.85; }
+  .price { font-size: 1.3rem; font-weight: 600; color: var(--primary); margin-bottom: 15px; }
+  .category-tag {
+    display: inline-block;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
+  .btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Atma', cursive;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    margin-top: 8px;
+  }
+  .btn-outline:hover { background: var(--primary); color: #fff; }
+  .empty { text-align: center; font-size: 1.5rem; color: var(--primary); margin-top: 80px; }
+</style>
+
+<h2>Our Sweet Menu 🍩</h2>
+
+<!-- Categories -->
+{% if categories %}
+<div class="categories">
+  <a href="{% url 'home' %}" class="cat-btn {% if not active_category %}active{% endif %}">
+    🍽️ All
+  </a>
+  {% for category in categories %}
+  <a href="?category={{ category.id }}" 
+     class="cat-btn {% if active_category.id == category.id %}active{% endif %}">
+    {{ category.icon }} {{ category.name }}
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Products -->
+{% if products %}
+  <div class="grid">
+    {% for product in products %}
+    <div class="card">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+      {% endif %}
+      <div class="card-body">
+        {% if product.category %}
+          <span class="category-tag">{{ product.category.icon }} {{ product.category.name }}</span>
+        {% endif %}
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <p class="price">${{ product.price }}</p>
+        {% if user.is_authenticated %}
+          <a href="{% url 'add_to_cart' product.id %}" class="btn">🛒 Add to Cart</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline">Login to Order</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty">
+    {% if active_category %}
+      No products in {{ active_category.name }} yet 🍰
+    {% else %}
+      No products yet 🍰 — check back soon!
+    {% endif %}
+  </p>
+{% endif %}
+
+{% endblock %}

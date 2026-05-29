@@ -1,0 +1,96 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<style>
+  .auth-container {
+    max-width: 420px;
+    margin: 60px auto;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+  .auth-container h2 {
+    font-family: 'Merienda', cursive;
+    font-size: 2rem;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Atma', cursive;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+  .remember-me input { width: auto; }
+  .btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-family: 'Atma', cursive;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .auth-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+  }
+  .auth-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+  .errors { color: #c0392b; font-size: 0.9rem; margin-top: 5px; }
+</style>
+
+<div class="auth-container">
+  <h2>🍰 Welcome Back!</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label>{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        <p class="errors">{{ field.errors.as_text }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="remember-me">
+      <input type="checkbox" id="remember_me" name="remember_me" />
+      <label for="remember_me">Remember me</label>
+    </div>
+
+    <button type="submit" class="btn">Login 🚀</button>
+  </form>
+  <div class="auth-link">
+    Don't have an account? <a href="{% url 'register' %}">Register here</a>
+  </div>
+</div>
+
+{% endblock %}
